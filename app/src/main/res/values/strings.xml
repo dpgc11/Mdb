@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MDb</string>
+    <string name="API_KEY">16ca8999baedb628ec4d705bc9192fc0</string>
 </resources>
