@@ -11,6 +11,9 @@ import android.widget.TextView;
 import com.example.android.mdb.R;
 import com.example.android.mdb.model.Movie;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,7 +59,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     @Override
     public void onBindViewHolder(MoviesAdapter.MovieViewHolder holder, int position) {
         holder.movieTitle.setText(movies.get(position).getTitle());
-        holder.data.setText(movies.get(position).getReleaseDate());
+        holder.data.setText(formatDate(movies.get(position).getReleaseDate()));
         holder.movieDescription.setText(movies.get(position).getOverview());
         holder.rating.setText(movies.get(position).getVoteAverage().toString());
     }
@@ -64,5 +67,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     @Override
     public int getItemCount() {
         return movies.size();
+    }
+
+    private String formatDate(String date) {
+        SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat mNewFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String newDate = "";
+        try {
+            Date d = mDateFormat.parse(date);
+            newDate = mNewFormat.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return newDate;
     }
 }
