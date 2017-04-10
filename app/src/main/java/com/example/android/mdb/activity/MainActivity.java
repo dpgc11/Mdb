@@ -1,6 +1,7 @@
 package com.example.android.mdb.activity;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,16 +25,39 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String API_KEY = "16ca8999baedb628ec4d705bc9192fc0";
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView recyclerView;
+    private ApiInterface apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+
+        recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ApiInterface apiService =
-                ApiClient.getClient().create(ApiInterface.class);
+        apiService = ApiClient.getClient().create(ApiInterface.class);
+
+
+        performSearch();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshContent();
+            }
+        });
+    }
+
+    private void refreshContent() {
+        performSearch();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void performSearch() {
 
         Call<MovieResponse> call = apiService.getTopRatedMovies(API_KEY);
         call.enqueue(new Callback<MovieResponse>() {
